@@ -3,7 +3,8 @@ package br.com.rayner.ms.loja.model.dto;
 public class ItemDaCompraDTO {
 
 	private long id;
-	private long quantidade;
+
+	private int quantidade;
 
 	public long getId() {
 		return id;
@@ -13,12 +14,12 @@ public class ItemDaCompraDTO {
 		this.id = id;
 	}
 
-	public long getQuantidade() {
+	public int getQuantidade() {
 		return quantidade;
 	}
 
-	public void setQuantidade(long quantidade) {
+	public void setQuantidade(int quantidade) {
 		this.quantidade = quantidade;
 	}
-	
+
 }

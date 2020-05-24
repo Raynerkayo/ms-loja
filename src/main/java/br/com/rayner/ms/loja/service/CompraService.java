@@ -3,21 +3,40 @@ package br.com.rayner.ms.loja.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.com.rayner.ms.loja.client.FornecedorClient;
 import br.com.rayner.ms.loja.controller.dto.CompraDTO;
+import br.com.rayner.ms.loja.model.Compra;
 import br.com.rayner.ms.loja.model.dto.InfoFornecedorDTO;
+import br.com.rayner.ms.loja.model.dto.InfoPedidoDTO;
 
 @Service
 public class CompraService {
 
+	private static final Logger LOG = LoggerFactory.getLogger(CompraService.class);
+	
 	@Autowired
 	private FornecedorClient client;
 
-	public void realizarCompra(CompraDTO compra) {
+	public Compra realizarCompra(CompraDTO compra) {
 
-		InfoFornecedorDTO infoPorEstado = client.getInfoPorEstado(compra.getEndereco().getEstado());
+		final String estado = compra.getEndereco().getEstado();
+		
+		LOG.info("Buscando informações de fornecedores do estado do: {}", estado);
+		InfoFornecedorDTO infoPorEstado = client.getInfoPorEstado(estado);
 
-		System.out.println(infoPorEstado.getEndereco());
+		LOG.info("Realizando um pedido.");
+		InfoPedidoDTO pedido = client.realizaPedido(compra.getItens());
+
+		Compra compraSalva = new Compra();
+		compraSalva.setPedidoId(pedido.getId());
+		compraSalva.setTempoDePreparo(pedido.getTempoDePreparo());
+		compraSalva.setEnderecoDeDestino(compra.getEndereco().toString());
+		compraSalva.setStatus(pedido.getStatus());
+
+		return compraSalva;
 	}
 
 }
